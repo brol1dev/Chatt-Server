@@ -5,6 +5,7 @@ var methodOverride = require('method-override');
 var expressJwt = require('express-jwt');
 var mongoose = require('mongoose');
 var users = require('./controllers/user.js');
+var events = require('./controllers/event.js');
 
 var app = express();
 
@@ -37,7 +38,12 @@ app.use(methodOverride());
 
 /*** Routes ***/
 
+// Users
 app.post('/signup', users.createUser);
 app.post('/signin', users.authenticate);
 app.post('/remove', users.deleteUsers); // remove this one
 app.post('/verify-token', users.verifyToken); // may stay?
+
+// Events
+app.post('/api/event', events.createEvent);
+app.get('/api/event', events.eventList);

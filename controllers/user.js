@@ -5,7 +5,8 @@ module.exports = {
 	createUser: function(req, res) {
 		var email = req.body.email || '';
 		var password = req.body.password || '';
-		if (!areUserFieldsValid(email, password, res)) return;
+		var username = req.body.username || '';
+		if (!areUserFieldsValid(username, email, password, res)) return;
 
 		User.find({ email: email }, 'email', function(err, users) {
 			if (err) {
@@ -18,7 +19,7 @@ module.exports = {
 				return;
 			}
 
-			User.create({ email: email, password: password}, function(err, user) {
+			User.create({ username: username, email: email, password: password}, function(err, user) {
 				if (err) {
 					handleError(res, 500, 'An error ocurred in the db. Try again later.');
 					return;
@@ -36,7 +37,7 @@ module.exports = {
 		var password = req.body.password || '';
 		if (!areUserFieldsValid(email, password, res)) return;
 
-		User.findOne({ email: email, password: password }, '_id email', function(err, user) {
+		User.findOne({ email: email, password: password }, '_id email username', function(err, user) {
 			if (err) {
 				handleError(res, 500, 'An error ocurred in the db. Try again later.');
 				return;
@@ -49,10 +50,11 @@ module.exports = {
 
 			var profile = {
 				id: user._id,
+				username: user.username,
 				email: user.email
 			};
 
-			var token = jwt.sign(profile, 'secret', { expiresInMinutes: 1 });
+			var token = jwt.sign(profile, 'secret', { expiresInMinutes: 60 * 24 });
 			
 			res.status(200).json({
 				'success': true,
@@ -103,9 +105,9 @@ function handleError(res, status, msg) {
 	});
 }
 
-function areUserFieldsValid(email, password, res) {
-		if (email === '' || password === '') {
-			handleError(res, 400, 'Specify an email and password.');
+function areUserFieldsValid(username, email, password, res) {
+		if (email === '' || password === '' || username === '') {
+			handleError(res, 400, 'Specify an username, email and password.');
 			return false;
 		}
 
