@@ -57,6 +57,53 @@ module.exports.eventList = function(req, res) {
 	});
 }
 
+module.exports.addMessage = function(req, res) {
+	var eventId = req.params.id || '';
+	var chatMessage = req.body;
+
+	console.log('params: ', req.params);
+	console.log('body: ', req.body);
+
+	if (eventId === '') {
+		handleError(res, 400, 'Specify an event_id.');
+		return;
+	}
+
+	Event.findByIdAndUpdate(eventId, { $push: { chat: chatMessage} }, function(err, ev) {
+		if (err) {
+			handleError(res, 500, 'An error ocurred in the db. Try again later.');
+			return;
+		}
+
+		res.status(200).json({
+			'success': true,
+			'event': ev
+		});
+	});
+}
+
+module.exports.getChat = function(req, res) {
+	var eventId = req.params.id || '';
+
+	if (eventId === '') {
+		handleError(res, 400, 'Specify an event_id.');
+		return;
+	}
+
+	Event.findById(eventId, 'chat', function(err, chat) {
+		if (err) {
+			handleError(res, 500, 'An error ocurred in the db. Try again later.');
+			return;
+		}
+
+		console.log('chat: ', chat);
+		res.status(200).json({
+			'success': true,
+			'chat': chat.chat
+		});
+	});
+}
+
 function areFieldsValid(title, authorId, authorName, res) {
 	if (title === '' || authorId === '' || authorName === '') {
 		handleError(res, 400, 'Specify a title, author.id and author.username.');
