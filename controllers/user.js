@@ -106,8 +106,8 @@ function handleError(res, status, msg) {
 }
 
 function areUserFieldsValid(username, email, password, res) {
-		if (email === '' || password === '' || username === '') {
-			handleError(res, 400, 'Specify an username, email and password.');
+		if (email === '' || password === '') {
+			handleError(res, 400, 'Specify an email and password.');
 			return false;
 		}
 
