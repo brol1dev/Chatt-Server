@@ -10,7 +10,8 @@
 		"method-override": "2.x",
 		"express-jwt": "0.x",
 		"jsonwebtoken": "0.x",
-		"mongoose": "3.x"
+		"mongoose": "3.x",
+		"restler": "3.2.x"
 	},
 	"scripts": {
 		"start": "forever app.js > output.log &"

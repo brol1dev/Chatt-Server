@@ -41,7 +41,6 @@ app.use(methodOverride());
 // Users
 app.post('/signup', users.createUser);
 app.post('/signin', users.authenticate);
-app.post('/remove', users.deleteUsers); // remove this one
 app.post('/verify-token', users.verifyToken); // may stay?
 
 // Events
@@ -49,3 +48,5 @@ app.post('/api/event', events.createEvent);
 app.get('/api/event', events.eventList);
 app.post('/api/event/:id/chat', events.addMessage);
 app.get('/api/event/:id/chat', events.getChat);
+
+app.post('/testmsg', events.testMessage);

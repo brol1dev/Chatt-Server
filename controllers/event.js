@@ -1,3 +1,4 @@
+var rest = require('restler');
 var Event = require('../models/event.js');
 
 module.exports.createEvent = function(req, res) {
@@ -12,7 +13,7 @@ module.exports.createEvent = function(req, res) {
 	Event.create({ 
 		title: title, 
 		'author.id': authorId, 
-		'author.username': authorName,  
+		'author.username': authorName,
 		pub: pub
 	}, 
 	function(err, ev) {
@@ -102,6 +103,27 @@ module.exports.getChat = function(req, res) {
 			'chat': chat.chat
 		});
 	});
+}
+
+module.exports.testMessage = function(req, res) {
+	var data = {
+		'registration_ids': ['APA91bH8MnpCvleSyoQfEbWWGcWkDcXGaT25bV2vafGJ0B9VzkE-TKyzBh8_rhKnDpFGupJjzL4J_uzcJmKb51TtAarOLrdy3xmakkCo6T2hpSP8Ada9_N1bwAAKIA0DpSM6oErIPWmyWjrKjAa-UUSdmT8jT75l49tes6Ce04C5bjdyLCm7w3I'],
+		'data': {
+			'msg': 'hola mundo!'
+		}
+	};
+
+	var options = {
+		headers: {
+			'Authorization': 'key=AIzaSyApg6GJjPAJkzsboKiG846i5h1we-98u1M'
+		}
+	};
+	rest.postJson('https://android.googleapis.com/gcm/send', data, options).on('complete', function(data, response) {
+		console.log('gsm response - %s', response.statusCode);
+		console.log(data);
+	});
+
+	res.status(200).end();
 }
 
 function areFieldsValid(title, authorId, authorName, res) {
