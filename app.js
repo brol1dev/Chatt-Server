@@ -41,7 +41,8 @@ app.use(methodOverride());
 // Users
 app.post('/signup', users.createUser);
 app.post('/signin', users.authenticate);
-app.post('/verify-token', users.verifyToken); // may stay?
+app.post('/logout', users.logout);
+// app.post('/verify-token', users.verifyToken); // may stay?
 
 // Events
 app.post('/api/event', events.createEvent);

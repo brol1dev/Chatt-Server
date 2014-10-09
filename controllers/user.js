@@ -40,7 +40,13 @@ module.exports.authenticate = function(req, res) {
 	var email = req.body.email || '';
 	var password = req.body.password || '';
 	var providerId = req.body.provider_id || '';
+	var deviceId = req.body.device_id || '';
 	if (!areUserFieldsValid('', email, password, providerId, res)) return;
+
+	if (deviceId === '') {
+		handleError(res, 400, 'Specify a device id.');
+		return;
+	}
 
 	var query = {}
 	if (providerId === '') {
@@ -51,7 +57,7 @@ module.exports.authenticate = function(req, res) {
 		query.providerId = providerId;
 	}
 
-	User.findOne(query, '_id email username image_url', function(err, user) {
+	User.findOne(query, '_id email username image_url devices', function(err, user) {
 		if (err) {
 			handleError(res, 500, 'An error ocurred in the db. Try again later.');
 			return;
@@ -60,6 +66,25 @@ module.exports.authenticate = function(req, res) {
 		if (!user) {
 			handleError(res, 401, 'Wrong credentials. Do you have an account?');
 			return;
+		}
+
+		var deviceIdExists = false;
+		for (var i = 0; i < user.devices.length; i++) {
+			if (user.devices[i] === deviceId) {
+				deviceIdExists = true;
+				break;
+			}
+		}
+
+		if (!deviceIdExists) {
+			user.devices.push(deviceId);
+
+			user.save(function(err) {
+				if (err) {
+					handleError(res, 500, 'An error ocurred in the db. Try again later.');
+					return;
+				}
+			});
 		}
 
 		var profile = {
@@ -75,6 +100,44 @@ module.exports.authenticate = function(req, res) {
 			'success': true,
 			'token': token,
 			'user': profile
+		});
+	});
+}
+
+// The point to have a logout is to remove the device id for that user.
+module.exports.logout = function(req, res) {
+	var email = req.body.email || '';
+	var deviceId = req.body.device_id || '';
+
+	User.findOne({ email: email }, 'email devices', function(err, user) {
+		if (err) {
+			handleError(res, 500, 'An error ocurred in the db. Try again later.');
+			return;
+		}
+
+		for (var i = 0; i < user.devices.length; i++) {
+			console.log('%s - %s', user.devices[i], deviceId);
+			if (user.devices[i] === deviceId) {
+				user.devices.splice(i, 1);
+
+				user.save(function(err) {
+					if (err) {
+						handleError(res, 500, 'An error ocurred in the db. Try again later.');
+						return;
+					}
+
+					res.status(200).json({
+						'success': true
+					});
+				});
+
+				return;
+			}
+		}
+
+		res.status(400).json({
+			'success': false,
+			'message': 'Device not found.'
 		});
 	});
 }
