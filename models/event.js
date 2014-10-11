@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var eventSchema = mongoose.Schema({
+var eventSchema = new Schema({
 	title: String,
 	author: {
 		id: String,
@@ -12,7 +13,11 @@ var eventSchema = mongoose.Schema({
 		id: String,
 		username: String
 	}],
-	chat: []
+	chat: [{
+		from: String,
+		to: String,
+		msg: String
+	}]
 });
 
 module.exports = mongoose.model('Event', eventSchema);
