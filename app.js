@@ -19,7 +19,7 @@ db.on('error', console.error.bind(console, 'db connection error: '));
 
 db.once('open', function() {
 	app.listen(3000, function() {
-		console.log('Listening on port %d', this.address().port);
+		console.log('Listening on http://%s:%d', this.address().address, this.address().port);
 	});
 });
 

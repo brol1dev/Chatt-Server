@@ -13,11 +13,7 @@ var eventSchema = new Schema({
 		id: String,
 		username: String
 	}],
-	chat: [{
-		from: String,
-		to: String,
-		msg: String
-	}]
+	chat: []
 });
 
 module.exports = mongoose.model('Event', eventSchema);
