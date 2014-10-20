@@ -4,16 +4,22 @@ var Schema = mongoose.Schema;
 var eventSchema = new Schema({
 	title: String,
 	author: {
-		id: String,
-		username: String
+		user_id: String,
+		username: String,
+		email: String
 	},
 	date: { type: Date, default: Date.now },
 	pub: Boolean,
 	users: [{
-		id: String,
-		username: String
+		user_id: String,
+		username: String,
+		email: String
 	}],
-	chat: []
+	chat: [{
+		from: String,
+		msg: String,
+		date: Date
+	}]
 });
 
 module.exports = mongoose.model('Event', eventSchema);

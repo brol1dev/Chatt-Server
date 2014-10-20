@@ -45,9 +45,10 @@ app.post('/logout', users.logout);
 // app.post('/verify-token', users.verifyToken); // may stay?
 
 // Events
-app.post('/api/event', events.createEvent);
+app.post('/api/user/:user_id/event', events.createEvent);
 app.get('/api/event', events.eventList);
 app.post('/api/event/:id/chat', events.addMessage);
 app.get('/api/event/:id/chat', events.getChat);
+app.put('/api/event/:id', events.addUser);
 
 app.post('/testmsg', events.testMessage);
